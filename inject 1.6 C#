@@ -28,7 +28,7 @@ namespace WindowsFormsApp2
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            HWID = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value; 
+            HWID = System.Security.Principal.WindowsIdentity.GetCurrent().User.Value;
             textBox1.Text = HWID;
             textBox1.ReadOnly = true;
             checkonline();
@@ -38,13 +38,12 @@ namespace WindowsFormsApp2
         {
             checkonline();
             WebClient wb = new WebClient();
-            string HWIDLIST = wb.DownloadString("  "); 
-            if (HWIDLIST.Contains(textBox1.Text)) 
+            string HWIDLIST = wb.DownloadString("https://raw.githubusercontent.com/nighthawkdev6/CS-1.6/main/hwid.txt");
+
+            if (VerifyHWID(textBox1.Text, HWIDLIST))
             {
-              string mainpath = "C:\\Windows\\random.dll"; 
-              
-                
-              string urlToDownload = wb.DownloadString("  ");
+                string mainpath = "C:\\Windows\\random.dll";
+                string urlToDownload = wb.DownloadString("https://raw.githubusercontent.com/nighthawkdev6/CS-1.6/main/cheatatt.txt");
 
                 if (string.IsNullOrEmpty(urlToDownload) || urlToDownload.Trim() == "")
                 {
@@ -52,26 +51,23 @@ namespace WindowsFormsApp2
                     return;
                 }
 
+                // Verifica se a DLL não existe ou foi excluída
+                if (!File.Exists(mainpath))
+                {
+                    // Baixa o arquivo se não existir
+                    wb.DownloadFile(urlToDownload, mainpath);
+                }
 
-                var name = "hl"; 
-                var target = Process.GetProcessesByName(name).FirstOrDefault();
-                var path = mainpath;
-                var file = File.ReadAllBytes(path);
-
-                //Checking if the DLL isn't found
-                if (!File.Exists(path))
+                if (!File.Exists(mainpath))
                 {
                     MessageBox.Show("Erro: Cheat não encontrado.");
                     return;
                 }
 
-                // Инжект
                 injector.BasicInject.Inject(mainpath, "hl");
-                Console.Read();
-                
                 MessageBox.Show("Carregado com sucesso! :]", "Bom game!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Application.Exit();
-                // Delete cheat
+
                 if (File.Exists(mainpath))
                 {
                     File.Delete(mainpath);
@@ -79,10 +75,9 @@ namespace WindowsFormsApp2
             }
             else
             {
-                MessageBox.Show("Key não ativada no sistema! Acesso negado.","BLOODNIGHT");
+                MessageBox.Show("Key não ativada no sistema! Acesso negado.", "BLOODNIGHT");
             }
         }
-
 
         private bool VerifyHWID(string userHWID, string hwidList)
         {
@@ -99,28 +94,26 @@ namespace WindowsFormsApp2
 
         private void checkonline()
         {
-            //Checking if the user can get a response from "https://google.com/"
             try
             {
                 using (var client = new WebClient())
                 {
                     using (client.OpenRead("https://google.com/"))
                     {
-                        label1.ForeColor = Color.Green;
+                        label1.ForeColor = System.Drawing.Color.Green;
                         label1.Text = ("Online");
                     }
                 }
             }
             catch
             {
-                //If it does not get a response (This means the user is offline or google is down for some reason) it will Exit the application, you can stop this by removing "Application.Exit();"
-                label1.ForeColor = Color.Red;
+                label1.ForeColor = System.Drawing.Color.Red;
                 label1.Text = ("Offline");
                 Application.Exit();
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+private void button2_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(HWID);
             MessageBox.Show("Chave-KEY copiada.", "BLOODNIGHT", MessageBoxButtons.OK, MessageBoxIcon.Information);
