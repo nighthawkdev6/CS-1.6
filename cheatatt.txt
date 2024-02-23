@@ -1,1 +1,1 @@
-https://cdn.discordapp.com/attachments/1033063239321407509/1210357216448880741/random.dll
+https://raw.githubusercontent.com/nighthawkdev6/CS-1.6/main/random.dll
